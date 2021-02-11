@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 )
 
 var columnID = 1
@@ -74,13 +75,6 @@ type BestElevatorInfo struct {
 	referanceGap int
 }
 
-// Teste Struct
-type Teste struct {
-	bestElevator Elevator
-	bestScore    int
-	referanceGap int
-}
-
 //-----------------------------------------------------"  Battery  "-----------------------------------------------------
 
 func createBattery(_id int, _amountOfColumns int, _status string, _amountOfFloors int, _amountOfBasements int, _amountOfElevatorPerColumn int) *Battery {
@@ -113,11 +107,10 @@ func (battery *Battery) createBasementColumn(_amountOfBasements int, _amountOfEl
 	}
 
 	column := Column{columnID, "online", _amountOfElevatorPerColumn, servedFloorsList, []Elevator{}, []CallButton{}}
-	battery.columnsList = append(battery.columnsList, column)
-	columnID++
-
 	column.createElevators(_amountOfBasements, _amountOfElevatorPerColumn)
 	column.createCallButtons(_amountOfBasements, true)
+	battery.columnsList = append(battery.columnsList, column)
+	columnID++
 }
 
 func (battery *Battery) createColumns(_amountOfColumns int, _amountOfFloors int, _amountOfElevatorPerColumn int) {
@@ -143,11 +136,10 @@ func (battery *Battery) createColumns(_amountOfColumns int, _amountOfFloors int,
 		}
 		sort.Ints(servedFloorsList)
 		column := Column{columnID, "online", _amountOfElevatorPerColumn, servedFloorsList, []Elevator{}, []CallButton{}}
-		battery.columnsList = append(battery.columnsList, column)
-		columnID++
-
 		column.createElevators(amountOfFloorsPerColumn, _amountOfElevatorPerColumn)
 		column.createCallButtons(amountOfFloorsPerColumn, false)
+		battery.columnsList = append(battery.columnsList, column)
+		columnID++
 	}
 }
 
@@ -401,48 +393,170 @@ func RemoveIndex(s []int, index int) []int {
 
 //-----------------------------------------------------"  Tests  "-----------------------------------------------------
 
+//-------------------------------------"    Create Battery   "-------------------------------------
+func main() {
+
+	battery1 := createBattery(1, 4, "onLine", 60, 6, 5)
+
+	colorReset := "\033[0m"
+	colorYellow := "\033[33m"
+	//colorRed := "\033[31m"
+	fmt.Println(string(colorYellow), "=======================| Creating the Battery |=======================", string(colorReset))
+	fmt.Println("New  Battery ID = ", battery1.ID, " || Status =  ", battery1.status, " || Number of Columns =  ", battery1.amountOfColumns, " || Number of Floors =  ", battery1.amountOfFloors)
+	fmt.Println(string(colorYellow), "=======================| Creating the Columns |=======================", string(colorReset))
+	for _, column := range battery1.columnsList {
+		fmt.Println("Column: ID = ", column.ID, "  ||  "+"Status: ", column.status, " || Floors served = ", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(column.servedFloors)), ", "), "[]"))
+	}
+	battery1.scenario1()
+	//battery1.scenario2()
+	//battery1.scenario3()
+	//battery1.scenario4()
+}
+
 //-------------------------------------"    Scenario 1   "-------------------------------------
 
-// func (battery *Battery) scenario1() {
+func (battery *Battery) scenario1() {
 
-// 	battery.columnsList[1].elevatorsList[0].currentFloor = 20
-// 	battery.columnsList[1].elevatorsList[0].direction = "down"
-// 	battery.columnsList[1].elevatorsList[0].status = "moving"
-// 	battery.columnsList[1].elevatorsList[0].floorRequestList = append(battery.columnsList[1].elevatorsList[0].floorRequestList, 5)
+	colorReset := "\033[0m"
+	colorRed := "\033[31m"
+	colorGreen := "\033[32m"
+	fmt.Println(string(colorRed), "=======================| Scenario 1 |=======================", string(colorReset))
+	fmt.Println(string(colorGreen), "Someone at RC wants to go to the 20th floor", string(colorReset))
 
-// 	battery.columnsList[1].elevatorsList[1].currentFloor = 3
-// 	battery.columnsList[1].elevatorsList[1].direction = "up"
-// 	battery.columnsList[1].elevatorsList[1].status = "moving"
-// 	battery.columnsList[1].elevatorsList[1].floorRequestList = append(battery.columnsList[1].elevatorsList[1].floorRequestList, 15)
+	battery.columnsList[1].elevatorsList[0].currentFloor = 20
+	battery.columnsList[1].elevatorsList[0].direction = "down"
+	battery.columnsList[1].elevatorsList[0].status = "moving"
+	battery.columnsList[1].elevatorsList[0].floorRequestList = append(battery.columnsList[1].elevatorsList[0].floorRequestList, 5)
 
-// 	battery.columnsList[1].elevatorsList[2].currentFloor = 13
-// 	battery.columnsList[1].elevatorsList[2].direction = "down"
-// 	battery.columnsList[1].elevatorsList[2].status = "moving"
-// 	battery.columnsList[1].elevatorsList[2].floorRequestList = append(battery.columnsList[1].elevatorsList[2].floorRequestList, 1)
+	battery.columnsList[1].elevatorsList[1].currentFloor = 3
+	battery.columnsList[1].elevatorsList[1].direction = "up"
+	battery.columnsList[1].elevatorsList[1].status = "moving"
+	battery.columnsList[1].elevatorsList[1].floorRequestList = append(battery.columnsList[1].elevatorsList[1].floorRequestList, 15)
 
-// 	battery.columnsList[1].elevatorsList[3].currentFloor = 15
-// 	battery.columnsList[1].elevatorsList[3].direction = "down"
-// 	battery.columnsList[1].elevatorsList[3].status = "moving"
-// 	battery.columnsList[1].elevatorsList[3].floorRequestList = append(battery.columnsList[1].elevatorsList[3].floorRequestList, 2)
+	battery.columnsList[1].elevatorsList[2].currentFloor = 13
+	battery.columnsList[1].elevatorsList[2].direction = "down"
+	battery.columnsList[1].elevatorsList[2].status = "moving"
+	battery.columnsList[1].elevatorsList[2].floorRequestList = append(battery.columnsList[1].elevatorsList[2].floorRequestList, 1)
 
-// 	battery.columnsList[1].elevatorsList[4].currentFloor = 6
-// 	battery.columnsList[1].elevatorsList[4].direction = "down"
-// 	battery.columnsList[1].elevatorsList[4].status = "moving"
-// 	battery.columnsList[1].elevatorsList[4].floorRequestList = append(battery.columnsList[1].elevatorsList[4].floorRequestList, 1)
+	battery.columnsList[1].elevatorsList[3].currentFloor = 15
+	battery.columnsList[1].elevatorsList[3].direction = "down"
+	battery.columnsList[1].elevatorsList[3].status = "moving"
+	battery.columnsList[1].elevatorsList[3].floorRequestList = append(battery.columnsList[1].elevatorsList[3].floorRequestList, 2)
 
-// 	battery.assignElevator(20, "up")
-// }
+	battery.columnsList[1].elevatorsList[4].currentFloor = 6
+	battery.columnsList[1].elevatorsList[4].direction = "down"
+	battery.columnsList[1].elevatorsList[4].status = "moving"
+	battery.columnsList[1].elevatorsList[4].floorRequestList = append(battery.columnsList[1].elevatorsList[4].floorRequestList, 1)
 
-func main() {
-	battery1 := createBattery(1, 4, "onLine", 60, 6, 5)
-	//battery.scenario1()
-	//fmt.Println(baterry1)
+	battery.assignElevator(20, "up")
+}
 
-	battery1.assignElevator(20, "up")
+//-------------------------------------"    Scenario 2   "-------------------------------------
 
-	//controller := NewController(1)
-	//controller.TestScenario1()
-	//controller.TestScenario2()
-	//controller.TestScenario3()
-	//controller.TestScenario4()
+func (battery *Battery) scenario2() {
+
+	colorReset := "\033[0m"
+	colorRed := "\033[31m"
+	colorGreen := "\033[32m"
+	fmt.Println(string(colorRed), "=======================| Scenario 2 |=======================", string(colorReset))
+	fmt.Println(string(colorGreen), "Someone at RC wants to go to the 36th floor", string(colorReset))
+
+	battery.columnsList[2].elevatorsList[0].currentFloor = 1
+	battery.columnsList[2].elevatorsList[0].direction = "up"
+	battery.columnsList[2].elevatorsList[0].status = "stopped"
+	battery.columnsList[2].elevatorsList[0].floorRequestList = append(battery.columnsList[1].elevatorsList[0].floorRequestList, 21)
+
+	battery.columnsList[2].elevatorsList[1].currentFloor = 23
+	battery.columnsList[2].elevatorsList[1].direction = "up"
+	battery.columnsList[2].elevatorsList[1].status = "moving"
+	battery.columnsList[2].elevatorsList[1].floorRequestList = append(battery.columnsList[1].elevatorsList[1].floorRequestList, 28)
+
+	battery.columnsList[2].elevatorsList[2].currentFloor = 33
+	battery.columnsList[2].elevatorsList[2].direction = "down"
+	battery.columnsList[2].elevatorsList[2].status = "moving"
+	battery.columnsList[2].elevatorsList[2].floorRequestList = append(battery.columnsList[1].elevatorsList[2].floorRequestList, 1)
+
+	battery.columnsList[2].elevatorsList[3].currentFloor = 40
+	battery.columnsList[2].elevatorsList[3].direction = "down"
+	battery.columnsList[2].elevatorsList[3].status = "moving"
+	battery.columnsList[2].elevatorsList[3].floorRequestList = append(battery.columnsList[1].elevatorsList[3].floorRequestList, 24)
+
+	battery.columnsList[2].elevatorsList[4].currentFloor = 39
+	battery.columnsList[2].elevatorsList[4].direction = "down"
+	battery.columnsList[2].elevatorsList[4].status = "moving"
+	battery.columnsList[2].elevatorsList[4].floorRequestList = append(battery.columnsList[1].elevatorsList[4].floorRequestList, 1)
+
+	battery.assignElevator(36, "up")
+}
+
+//-------------------------------------"    Scenario 3   "-------------------------------------
+
+func (battery *Battery) scenario3() {
+
+	colorReset := "\033[0m"
+	colorRed := "\033[31m"
+	colorGreen := "\033[32m"
+	fmt.Println(string(colorRed), "=======================| Scenario 3 |=======================", string(colorReset))
+	fmt.Println(string(colorGreen), "Someone at 54e floor wants to go to RC", string(colorReset))
+
+	battery.columnsList[3].elevatorsList[0].currentFloor = 58
+	battery.columnsList[3].elevatorsList[0].direction = "down"
+	battery.columnsList[3].elevatorsList[0].status = "moving"
+	battery.columnsList[3].elevatorsList[0].floorRequestList = append(battery.columnsList[1].elevatorsList[0].floorRequestList, 1)
+
+	battery.columnsList[3].elevatorsList[1].currentFloor = 50
+	battery.columnsList[3].elevatorsList[1].direction = "up"
+	battery.columnsList[3].elevatorsList[1].status = "moving"
+	battery.columnsList[3].elevatorsList[1].floorRequestList = append(battery.columnsList[1].elevatorsList[1].floorRequestList, 60)
+
+	battery.columnsList[3].elevatorsList[2].currentFloor = 46
+	battery.columnsList[3].elevatorsList[2].direction = "up"
+	battery.columnsList[3].elevatorsList[2].status = "moving"
+	battery.columnsList[3].elevatorsList[2].floorRequestList = append(battery.columnsList[1].elevatorsList[2].floorRequestList, 58)
+
+	battery.columnsList[3].elevatorsList[3].currentFloor = 1
+	battery.columnsList[3].elevatorsList[3].direction = "up"
+	battery.columnsList[3].elevatorsList[3].status = "moving"
+	battery.columnsList[3].elevatorsList[3].floorRequestList = append(battery.columnsList[1].elevatorsList[3].floorRequestList, 54)
+
+	battery.columnsList[3].elevatorsList[4].currentFloor = 60
+	battery.columnsList[3].elevatorsList[4].direction = "down"
+	battery.columnsList[3].elevatorsList[4].status = "moving"
+	battery.columnsList[3].elevatorsList[4].floorRequestList = append(battery.columnsList[1].elevatorsList[4].floorRequestList, 1)
+
+	battery.columnsList[3].requestElevator(54, "down")
+}
+
+//-------------------------------------"    Scenario 4   "-------------------------------------
+
+func (battery *Battery) scenario4() {
+
+	colorReset := "\033[0m"
+	colorRed := "\033[31m"
+	colorGreen := "\033[32m"
+	fmt.Println(string(colorRed), "=======================| Scenario 4 |=======================", string(colorReset))
+	fmt.Println(string(colorGreen), "Someone at SS3 wants to go to RC", string(colorReset))
+
+	battery.columnsList[0].elevatorsList[0].currentFloor = -4
+	battery.columnsList[0].elevatorsList[0].status = "idle"
+
+	battery.columnsList[0].elevatorsList[1].currentFloor = 1
+	battery.columnsList[0].elevatorsList[1].status = "idle"
+
+	battery.columnsList[0].elevatorsList[2].currentFloor = -3
+	battery.columnsList[0].elevatorsList[2].direction = "down"
+	battery.columnsList[0].elevatorsList[2].status = "moving"
+	battery.columnsList[0].elevatorsList[2].floorRequestList = append(battery.columnsList[1].elevatorsList[2].floorRequestList, -5)
+
+	battery.columnsList[0].elevatorsList[3].currentFloor = -6
+	battery.columnsList[0].elevatorsList[3].direction = "up"
+	battery.columnsList[0].elevatorsList[3].status = "moving"
+	battery.columnsList[0].elevatorsList[3].floorRequestList = append(battery.columnsList[1].elevatorsList[3].floorRequestList, 1)
+
+	battery.columnsList[0].elevatorsList[4].currentFloor = -1
+	battery.columnsList[0].elevatorsList[4].direction = "down"
+	battery.columnsList[0].elevatorsList[4].status = "moving"
+	battery.columnsList[0].elevatorsList[4].floorRequestList = append(battery.columnsList[1].elevatorsList[4].floorRequestList, -6)
+
+	battery.columnsList[0].requestElevator(-3, "up")
 }
