@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//-----------"  Globals Variables "------------
 var columnID = 1
 var floorRequestButtonID = 1
 var elevatorID = 1
@@ -79,24 +80,28 @@ type BestElevatorInfo struct {
 
 //-----------------------------------------------------"  Battery  "-----------------------------------------------------
 
+// Through this method, we create the Battery
 func createBattery(_id int, _amountOfColumns int, _status string, _amountOfFloors int, _amountOfBasements int, _amountOfElevatorPerColumn int) *Battery {
 
 	battery := Battery{_id, _amountOfColumns, _amountOfFloors, _amountOfBasements, _status, []Column{}, []FloorRequestButton{}}
 
 	//Checks whether basement exists
 	if _amountOfBasements > 0 {
-		//Create and add the Basement's columns
+		//Ensures that when creating the Battery, the createBasementColumn  method is called
 		battery.createBasementColumn(_amountOfBasements, _amountOfElevatorPerColumn)
-		//Create and add the Basement's floorRequestButton to the List.
+		//Ensures that when creating the Battery, the createBasementFloorRequestButtons  method is called
 		battery.createBasementFloorRequestButtons(_amountOfBasements)
 		_amountOfColumns--
 	}
+	//Ensures that when creating the Battery, the createColumns  method is called
 	battery.createColumns(_amountOfColumns, _amountOfFloors, _amountOfElevatorPerColumn)
+	//Ensures that when creating the Battery, the createFloorRequestButtons  method is called
 	battery.createFloorRequestButtons(_amountOfFloors)
 
 	return &battery
 }
 
+// Through this method, we create the Basement Column
 func (battery *Battery) createBasementColumn(_amountOfBasements int, _amountOfElevatorPerColumn int) {
 
 	servedFloorsList := []int{}
@@ -109,12 +114,15 @@ func (battery *Battery) createBasementColumn(_amountOfBasements int, _amountOfEl
 	}
 
 	column := Column{columnID, "A", "online", _amountOfElevatorPerColumn, servedFloorsList, []Elevator{}, []CallButton{}}
+	//Ensures that when creating the Battery, the createElevators  method is called
 	column.createElevators(_amountOfBasements, _amountOfElevatorPerColumn)
+	//Ensures that when creating the Battery, the createCallButtons  method is called
 	column.createCallButtons(_amountOfBasements, true)
 	battery.columnsList = append(battery.columnsList, column)
 	columnID++
 }
 
+// Through this method, we create the outhers Columns
 func (battery *Battery) createColumns(_amountOfColumns int, _amountOfFloors int, _amountOfElevatorPerColumn int) {
 
 	columnNameList := []string{"B", "C", "D"}
@@ -140,13 +148,16 @@ func (battery *Battery) createColumns(_amountOfColumns int, _amountOfFloors int,
 		}
 		sort.Ints(servedFloorsList)
 		column := Column{columnID, columnNameList[i-1], "online", _amountOfElevatorPerColumn, servedFloorsList, []Elevator{}, []CallButton{}}
+		//Ensures that when creating the Battery, the createElevators  method is called
 		column.createElevators(amountOfFloorsPerColumn, _amountOfElevatorPerColumn)
+		//Ensures that when creating the Battery, the createCallButtons  method is called
 		column.createCallButtons(amountOfFloorsPerColumn, false)
 		battery.columnsList = append(battery.columnsList, column)
 		columnID++
 	}
 }
 
+// Through this method, we create the buttons that will be on the panel, except the basement's floors
 func (battery *Battery) createBasementFloorRequestButtons(_amountOfBasements int) {
 
 	buttonFloor := -1
@@ -159,6 +170,7 @@ func (battery *Battery) createBasementFloorRequestButtons(_amountOfBasements int
 	}
 }
 
+// Through this method, we create the buttons that will be on the panel, just the basement's floors
 func (battery *Battery) createFloorRequestButtons(_amountOfFloors int) {
 
 	for buttonFloor := 1; buttonFloor <= _amountOfFloors; buttonFloor++ {
@@ -168,6 +180,7 @@ func (battery *Battery) createFloorRequestButtons(_amountOfFloors int) {
 	}
 }
 
+// Through this method, we will locating which column is capable of serving your floor
 func (battery *Battery) findBestColumn(_requestedFloor int) *Column {
 
 	foundColumn := Column{}
@@ -181,6 +194,7 @@ func (battery *Battery) findBestColumn(_requestedFloor int) *Column {
 	return &foundColumn
 }
 
+// Through this method, we will handling the demand for an elevator from the central panel
 func (battery *Battery) assignElevator(_requestedFloor int, _direction string) {
 	column := battery.findBestColumn(_requestedFloor)
 	fmt.Println("- Selected Column: ", column.name)
@@ -192,6 +206,7 @@ func (battery *Battery) assignElevator(_requestedFloor int, _direction string) {
 
 //-----------------------------------------------------"  Column  "-----------------------------------------------------
 
+//Through this method we create the elevators
 func (column *Column) createElevators(_amountOfFloors int, _amountOfElevators int) {
 
 	for i := 1; i <= _amountOfElevators; i++ {
@@ -201,6 +216,7 @@ func (column *Column) createElevators(_amountOfFloors int, _amountOfElevators in
 	}
 }
 
+//Through this method we create the buttons floors
 func (column *Column) createCallButtons(_amountOfFloors int, _isBasement bool) {
 
 	if _isBasement {
@@ -225,6 +241,7 @@ func (column *Column) createCallButtons(_amountOfFloors int, _isBasement bool) {
 	}
 }
 
+//Through this method we will handling the demand for an elevator from your current floor
 func (column *Column) requestElevator(_requestedFloor int, _direction string) *Elevator {
 
 	fmt.Println("- Current column: ", column.name)
@@ -237,6 +254,7 @@ func (column *Column) requestElevator(_requestedFloor int, _direction string) *E
 	return &elevator
 }
 
+//Through this method we will score the best elevator, taking into account proximity, direction and its status
 func (column *Column) findElevator(_requestedFloor int, _direction string) Elevator {
 
 	bestElevatorInfo := BestElevatorInfo{Elevator{}, 6, 10000000}
@@ -245,7 +263,8 @@ func (column *Column) findElevator(_requestedFloor int, _direction string) Eleva
 		for _, elevator := range column.elevatorsList {
 
 			if _requestedFloor == elevator.currentFloor && elevator.status == "stopped" {
-				//The elevator is at the lobby and already has some requests. It is about to leave but has not yet departe
+
+				//The elevator is at the lobby and already has some requests. It is about to leave but has not yet departed
 				bestElevatorInfo = column.checkIfElevatorISBetter(1, elevator, bestElevatorInfo, _requestedFloor)
 
 			} else if _requestedFloor == elevator.currentFloor && elevator.status == "idle" {
@@ -254,7 +273,7 @@ func (column *Column) findElevator(_requestedFloor int, _direction string) Eleva
 				bestElevatorInfo = column.checkIfElevatorISBetter(2, elevator, bestElevatorInfo, _requestedFloor)
 
 			} else if _requestedFloor > elevator.currentFloor && elevator.direction == "up" {
-				//The elevator is lower than me and is coming up. It means that I am requesting an elevator to go to a basement, and the elevator is on it's way to me.
+				//The elevator is lower than me and is coming up. It means that I'm requesting an elevator to go to a basement, and the elevator is on it's way to me.
 
 				bestElevatorInfo = column.checkIfElevatorISBetter(3, elevator, bestElevatorInfo, _requestedFloor)
 
@@ -268,7 +287,7 @@ func (column *Column) findElevator(_requestedFloor int, _direction string) Eleva
 
 				bestElevatorInfo = column.checkIfElevatorISBetter(4, elevator, bestElevatorInfo, _requestedFloor)
 			} else {
-				//The elevator is not available, but still could take the call if nothing better is foun
+				//The elevator is not available, but still could take the call if nothing better is found
 				bestElevatorInfo = column.checkIfElevatorISBetter(5, elevator, bestElevatorInfo, _requestedFloor)
 			}
 		}
@@ -301,6 +320,7 @@ func (column *Column) findElevator(_requestedFloor int, _direction string) Eleva
 	return bestElevatorInfo.bestElevator
 }
 
+//Through this method we will analyze the scores of the method above and select the best one
 func (column *Column) checkIfElevatorISBetter(scoreToCheck int, newElevator Elevator, bestElevatorInfo BestElevatorInfo, _requestedFloor int) BestElevatorInfo {
 	if scoreToCheck < bestElevatorInfo.bestScore {
 
@@ -323,16 +343,18 @@ func (column *Column) checkIfElevatorISBetter(scoreToCheck int, newElevator Elev
 
 //-----------------------------------------------------"  Elevator  "-----------------------------------------------------
 
+//Through this sequence we can move the elevator
 func (elevator *Elevator) move() {
+	// Checks for requested floors in the list
 	for len(elevator.floorRequestList) != 0 {
 
 		destination := elevator.floorRequestList[0]
 		elevator.operateDoors("closed")
 
-		if elevator.door.status == "closed" {
+		if elevator.door.status == "closed" { // Check if the door dont' have any obstruction
 
 			fmt.Println("Status door:", elevator.door.status)
-			elevator.status = "moving"
+			elevator.status = "moving" //Changes the status of the elevator when it starts to move
 			elevator.screenDisplay = elevator.currentFloor
 			fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
 
@@ -361,16 +383,17 @@ func (elevator *Elevator) move() {
 					fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
 				}
 			}
-			elevator.status = "stopped"
+			elevator.status = "stopped" //Changes the status of the elevator when it reaches the correct floor
 			fmt.Println("Elevator Status: ", elevator.status)
 			elevator.operateDoors("openned")
 			fmt.Println("Status door:", elevator.door.status)
 		}
-		elevator.floorRequestList = RemoveIndex(elevator.floorRequestList, 0)
+		elevator.floorRequestList = RemoveIndex(elevator.floorRequestList, 0) //Removes the floor that has already been treated.
 	}
-	elevator.status = "idle"
+	elevator.status = "idle" //Changes the status of the elevator when it finishes its list of floors to go
 }
 
+//Through this sequence we can sort the list in ascending or descending order, according to the direction the elevator is going
 func (elevator *Elevator) sortFloorList() {
 	if elevator.direction == "up" {
 
@@ -385,9 +408,10 @@ func (elevator *Elevator) sortFloorList() {
 	}
 }
 
+//Through this sequence we can verify that there is no obstruction in the door
 func (elevator *Elevator) operateDoors(_command string) {
 
-	sensorDoor := false
+	sensorDoor := false // External data
 	if sensorDoor == false {
 		elevator.door.status = _command
 	} else {
@@ -397,7 +421,7 @@ func (elevator *Elevator) operateDoors(_command string) {
 
 //-----------------------------------------------------"  Auxiliary functions  "-----------------------------------------------------
 
-// Find func
+// Find func - Assists in scanning something in an array
 func Find(slice []int, val int) bool {
 	for _, a := range slice {
 		if a == val {
@@ -407,7 +431,7 @@ func Find(slice []int, val int) bool {
 	return false
 }
 
-//RemoveIndex func
+//RemoveIndex func - Remove a specific item from the array
 func RemoveIndex(s []int, index int) []int {
 	return append(s[:index], s[index+1:]...)
 }
