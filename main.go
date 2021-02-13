@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"sort"
 	"strconv"
-	"strings"
 )
 
 //-----------"  Globals Variables "------------
@@ -197,9 +195,9 @@ func (battery *Battery) findBestColumn(_requestedFloor int) *Column {
 // Through this method, we will handling the demand for an elevator from the central panel
 func (battery *Battery) assignElevator(_requestedFloor int, _direction string) {
 	column := battery.findBestColumn(_requestedFloor)
-	fmt.Println("- Selected Column: ", column.name)
+	//fmt.Println("- Selected Column: ", column.name)
 	elevator := column.findElevator(1, _direction)
-	fmt.Println("- Selected Elevator: ", elevator.name)
+	//fmt.Println("- Selected Elevator: ", elevator.name)
 	elevator.floorRequestList = append(elevator.floorRequestList, _requestedFloor)
 	elevator.move()
 }
@@ -244,9 +242,9 @@ func (column *Column) createCallButtons(_amountOfFloors int, _isBasement bool) {
 //Through this method we will handling the demand for an elevator from your current floor
 func (column *Column) requestElevator(_requestedFloor int, _direction string) *Elevator {
 
-	fmt.Println("- Current column: ", column.name)
+	//fmt.Println("- Current column: ", column.name)
 	elevator := column.findElevator(_requestedFloor, _direction)
-	fmt.Println("- Selected Elevator: ", elevator.name)
+	//fmt.Println("- Selected Elevator: ", elevator.name)
 	elevator.floorRequestList = append(elevator.floorRequestList, _requestedFloor)
 	elevator.sortFloorList()
 	elevator.move()
@@ -353,10 +351,10 @@ func (elevator *Elevator) move() {
 
 		if elevator.door.status == "closed" { // Check if the door dont' have any obstruction
 
-			fmt.Println("Status door:", elevator.door.status)
+			//fmt.Println("Status door:", elevator.door.status)
 			elevator.status = "moving" //Changes the status of the elevator when it starts to move
 			elevator.screenDisplay = elevator.currentFloor
-			fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
+			//fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
 
 			if elevator.currentFloor < destination {
 
@@ -369,7 +367,7 @@ func (elevator *Elevator) move() {
 					if elevator.currentFloor != 0 {
 
 						elevator.screenDisplay = elevator.currentFloor
-						fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
+						//fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
 					}
 				}
 			} else if elevator.currentFloor > destination {
@@ -380,13 +378,13 @@ func (elevator *Elevator) move() {
 
 					elevator.currentFloor--
 					elevator.screenDisplay = elevator.currentFloor
-					fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
+					//fmt.Println("Elevator Status: ", elevator.status, " ||  Elevator Display: ", elevator.screenDisplay)
 				}
 			}
 			elevator.status = "stopped" //Changes the status of the elevator when it reaches the correct floor
-			fmt.Println("Elevator Status: ", elevator.status)
+			//fmt.Println("Elevator Status: ", elevator.status)
 			elevator.operateDoors("openned")
-			fmt.Println("Status door:", elevator.door.status)
+			//fmt.Println("Status door:", elevator.door.status)
 		}
 		elevator.floorRequestList = RemoveIndex(elevator.floorRequestList, 0) //Removes the floor that has already been treated.
 	}
@@ -415,7 +413,7 @@ func (elevator *Elevator) operateDoors(_command string) {
 	if sensorDoor == false {
 		elevator.door.status = _command
 	} else {
-		fmt.Println("Blocked door")
+		//fmt.Println("Blocked door")
 	}
 }
 
@@ -443,21 +441,21 @@ func main() {
 
 	battery1 := createBattery(1, 4, "onLine", 60, 6, 5)
 
-	colorReset := "\033[0m"
-	colorYellow := "\033[33m"
-	fmt.Println("_")
-	fmt.Println(string(colorYellow), "=======================| Creating the Battery |=======================", string(colorReset))
-	fmt.Println("_")
-	fmt.Println("New  Battery ID = ", battery1.ID, " || Status =  ", battery1.status, " || Number of Columns =  ", battery1.amountOfColumns, " || Number of Floors =  ", battery1.amountOfFloors, " || Number of Basements =  ", battery1.amountOfBasements)
-	fmt.Println("_")
-	fmt.Println(string(colorYellow), "=======================| Creating the Columns |=======================", string(colorReset))
-	fmt.Println("_")
-	for _, column := range battery1.columnsList {
-		fmt.Println("Column: ", column.name, "  ||  "+"Status: ", column.status, " || Floors served = ", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(column.servedFloors)), ", "), "[]"))
-	}
-	battery1.scenario1()
-	battery1.scenario2()
-	battery1.scenario3()
+	// colorReset := "\033[0m"
+	// colorYellow := "\033[33m"
+	// fmt.Println("_")
+	// fmt.Println(string(colorYellow), "=======================| Creating the Battery |=======================", string(colorReset))
+	// fmt.Println("_")
+	// fmt.Println("New  Battery ID = ", battery1.ID, " || Status =  ", battery1.status, " || Number of Columns =  ", battery1.amountOfColumns, " || Number of Floors =  ", battery1.amountOfFloors, " || Number of Basements =  ", battery1.amountOfBasements)
+	// fmt.Println("_")
+	// fmt.Println(string(colorYellow), "=======================| Creating the Columns |=======================", string(colorReset))
+	// fmt.Println("_")
+	// for _, column := range battery1.columnsList {
+	// 	fmt.Println("Column: ", column.name, "  ||  "+"Status: ", column.status, " || Floors served = ", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(column.servedFloors)), ", "), "[]"))
+	// }
+	//battery1.scenario1()
+	//battery1.scenario2()
+	//battery1.scenario3()
 	battery1.scenario4()
 }
 
@@ -465,13 +463,13 @@ func main() {
 
 func (battery *Battery) scenario1() {
 
-	colorReset := "\033[0m"
-	colorRed := "\033[31m"
-	colorGreen := "\033[32m"
-	fmt.Println("_")
-	fmt.Println(string(colorRed), "=============================================| Scenario 1 |=============================================", string(colorReset))
-	fmt.Println("_")
-	fmt.Println(string(colorGreen), "Someone at RC wants to go to the 20th floor", string(colorReset))
+	// colorReset := "\033[0m"
+	// colorRed := "\033[31m"
+	// colorGreen := "\033[32m"
+	//fmt.Println("_")
+	//fmt.Println(string(colorRed), "=============================================| Scenario 1 |=============================================", string(colorReset))
+	//fmt.Println("_")
+	//fmt.Println(string(colorGreen), "Someone at RC wants to go to the 20th floor", string(colorReset))
 
 	battery.columnsList[1].elevatorsList[0].currentFloor = 20
 	battery.columnsList[1].elevatorsList[0].direction = "down"
@@ -505,13 +503,13 @@ func (battery *Battery) scenario1() {
 
 func (battery *Battery) scenario2() {
 
-	colorReset := "\033[0m"
-	colorRed := "\033[31m"
-	colorGreen := "\033[32m"
-	fmt.Println("_")
-	fmt.Println(string(colorRed), "=============================================| Scenario 2 |=============================================", string(colorReset))
-	fmt.Println("_")
-	fmt.Println(string(colorGreen), "Someone at RC wants to go to the 36th floor", string(colorReset))
+	// colorReset := "\033[0m"
+	// colorRed := "\033[31m"
+	// colorGreen := "\033[32m"
+	//fmt.Println("_")
+	//fmt.Println(string(colorRed), "=============================================| Scenario 2 |=============================================", string(colorReset))
+	//fmt.Println("_")
+	//fmt.Println(string(colorGreen), "Someone at RC wants to go to the 36th floor", string(colorReset))
 
 	battery.columnsList[2].elevatorsList[0].currentFloor = 1
 	battery.columnsList[2].elevatorsList[0].direction = "up"
@@ -545,13 +543,13 @@ func (battery *Battery) scenario2() {
 
 func (battery *Battery) scenario3() {
 
-	colorReset := "\033[0m"
-	colorRed := "\033[31m"
-	colorGreen := "\033[32m"
-	fmt.Println("_")
-	fmt.Println(string(colorRed), "=============================================| Scenario 3 |=============================================", string(colorReset))
-	fmt.Println("_")
-	fmt.Println(string(colorGreen), "Someone at 54e floor wants to go to RC", string(colorReset))
+	// colorReset := "\033[0m"
+	// colorRed := "\033[31m"
+	// colorGreen := "\033[32m"
+	//fmt.Println("_")
+	//fmt.Println(string(colorRed), "=============================================| Scenario 3 |=============================================", string(colorReset))
+	//fmt.Println("_")
+	//fmt.Println(string(colorGreen), "Someone at 54e floor wants to go to RC", string(colorReset))
 
 	battery.columnsList[3].elevatorsList[0].currentFloor = 58
 	battery.columnsList[3].elevatorsList[0].direction = "down"
@@ -585,13 +583,13 @@ func (battery *Battery) scenario3() {
 
 func (battery *Battery) scenario4() {
 
-	colorReset := "\033[0m"
-	colorRed := "\033[31m"
-	colorGreen := "\033[32m"
-	fmt.Println("_")
-	fmt.Println(string(colorRed), "=============================================| Scenario 4 |=============================================", string(colorReset))
-	fmt.Println("_")
-	fmt.Println(string(colorGreen), "Someone at SS3 wants to go to RC", string(colorReset))
+	// colorReset := "\033[0m"
+	// colorRed := "\033[31m"
+	// colorGreen := "\033[32m"
+	//fmt.Println("_")
+	//fmt.Println(string(colorRed), "=============================================| Scenario 4 |=============================================", string(colorReset))
+	//fmt.Println("_")
+	//fmt.Println(string(colorGreen), "Someone at SS3 wants to go to RC", string(colorReset))
 
 	battery.columnsList[0].elevatorsList[0].currentFloor = -4
 	battery.columnsList[0].elevatorsList[0].status = "idle"

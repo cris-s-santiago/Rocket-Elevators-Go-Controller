@@ -2,7 +2,7 @@
 🚀Contains the Rocket Elevator files. New solution for the Commercial sector. 📈
 
 This code was developed for the new phase of Rocket Elevators, with cutting edge technology, in this new challenge we will have a super modern elevator.
-You will have a central panel on the ground floor, where when placing the desired floor, it will indicate the conluna and the best elevator of this column for you.
+You will have a central panel on the ground floor, where when placing the desired floor, it will indicate the column and the best elevator of this column for you.
 Therefore, there is no need for buttons inside the elevator car.
 
 📌 The program to be developed is a controller set up in a building of 66 floors including 6 basements served by 4 columns of 5 cages each.
@@ -28,7 +28,7 @@ This program contains the following Classes:
 - Battery, Column, Elevator, CallButton, FloorRequestButton, Door.
 Each class has its own methods.
 
-⚡In the Batery Class, we will have the following methods:
+⚡In the Battery Class, we will have the following methods:
 - createBasementColumn: Responsible for creating the column that will serve the basement. 
 - createColumns: Responsible for creating the other columns.
 - createFloorRequestButtons: Responsible for creating the buttons that will be on the panel, except the basement floors.
